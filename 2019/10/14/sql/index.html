@@ -20,8 +20,8 @@
 <meta property="og:image" content="http://yoursite.com/2019/10/14/sql/sql_pic_3.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/10/14/sql/sql_pic_4.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/10/14/sql/sql_pic_5.jpg">
-<meta property="og:image" content="http://yoursite.com/2019/10/14/sql/sql_pic_6">
-<meta property="og:updated_time" content="2019-10-14T05:10:19.277Z">
+<meta property="og:image" content="http://yoursite.com/2019/10/14/sql/sql_pic_6.jpg">
+<meta property="og:updated_time" content="2019-10-14T05:14:17.212Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql">
 <meta name="twitter:description" content="一、漏洞实例实践 某系统后台ajax.php的POST数据中，N_type参数可加入延时判断，因此判断存在注入点。 从源码中可以看到N_type参数是预设好的值，并且是执行SQL语句的一部分，能够提供恶意SQL语句执行的条件。因此可在N_type参数处构造SQL语句执行获取敏感信息。 因此可在N_type参数处使用Sqlmap构造SQL语句执行获取敏感信息。首先构造注入ajax.php的注入POS">
@@ -99,7 +99,7 @@
 <p>从源码中可以看到N_type参数是预设好的值，并且是执行SQL语句的一部分，能够提供恶意SQL语句执行的条件。因此可在N_type参数处构造SQL语句执行获取敏感信息。<br><img src="/2019/10/14/sql/sql_pic_2.jpg" alt="sql_pic_2"></p>
 <p>因此可在N_type参数处使用Sqlmap构造SQL语句执行获取敏感信息。<br>首先构造注入ajax.php的注入POST数据。然后sqlmap -r命令构造payload进行sql注入，能够获取到敏感信息数据库信息及用户信息。<br><img src="/2019/10/14/sql/sql_pic_3.jpg" alt="sql_pic_3"><br><img src="/2019/10/14/sql/sql_pic_4.jpg" alt="sql_pic_4"><br><img src="/2019/10/14/sql/sql_pic_5.jpg" alt="sql_pic_5"></p>
 <p>二、漏洞原理分析</p>
-<p><img src="/2019/10/14/sql/sql_pic_6" alt="sql_pic_6">.jpg<br>SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。从定义中就可以总结出SQL注入存在的特征：（1）具有参数提交，例如？name=value；（2）与数据库有交互行为，涉及参数提交。造成SQL注入漏洞原因有两个：一个是没有对输入的数据进行过滤(过滤输入)，还有一个是没有对发送到数据库的数据进行转义(转义输出)。</p>
+<p><img src="/2019/10/14/sql/sql_pic_6.jpg" alt="sql_pic_6"><br>SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。从定义中就可以总结出SQL注入存在的特征：（1）具有参数提交，例如？name=value；（2）与数据库有交互行为，涉及参数提交。造成SQL注入漏洞原因有两个：一个是没有对输入的数据进行过滤(过滤输入)，还有一个是没有对发送到数据库的数据进行转义(转义输出)。</p>
 <p>检测是否存在SQL注入漏洞主要分为简单判断和特意伪造两个方面。简单判断是在URL中直接添加数字、字符或搜索进行检测，比如<a href="http://host/test.php?id=100" target="_blank" rel="noopener">http://host/test.php?id=100</a> and 1=1或<a href="http://host/test.php?name=rainman" target="_blank" rel="noopener">http://host/test.php?name=rainman</a> ‘ and ‘1’=‘1。特意伪造是更改常见SQL语句达到正常执行命令的目的，比如万能密码（‘or 1=1 or’或admin’ or 1=1）或字符串连接（<a href="http://host/test.jsp?ProdName=B’||’ook）。" target="_blank" rel="noopener">http://host/test.jsp?ProdName=B’||’ook）。</a></p>
 <p>进行SQL注入漏洞利用时，可以先试探性注入，比如延时攻击（注入语句中加入睡眠时间，以此根据响应时间判断猜测正确与否）或盲注（判断用户名第一个字符是不是“a”）；也可以更改SQL语句进行，比如基于错误的注入技术（在SQL注入语句中加入执行函数语句）或外连攻击技术（在SQL注入语句中加入外连其他服务器的执行函数，使得连接到其他服务器）；还可以使用拼接SQL语句注入，比如联合查询SQL注入技术（UNION联合多个SQL语句）</p>
 <p>三、漏洞修复方法<br>（1）    使用参数化查询方式进行SQL查询。<br>（2）    对输入参数进行检查和过滤。<br>（3）    页面不错误回显。</p>
