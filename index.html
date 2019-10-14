@@ -62,6 +62,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Arbitrary-file-Code-Execution-Vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/" class="article-date">
+  <time datetime="2019-10-14T13:53:28.000Z" itemprop="datePublished">2019-10-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/">Arbitrary file Code Execution Vulnerability</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一、漏洞实践实例</p>
+<pre><code>某后台管理网站a_templetex.php目的是接收浏览器端传入的POST参数filename和contents，通过file_put_contents函数将contents内容写到filename对应的文件中。可以看到执行file_put_contents函数之前未对filename和contents做任何检查和过滤。</code></pre><p>若contents内容为可执行的恶意代码，则最终生成的filename为木马文件。<br><img src="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/code_execu_pic_1.jpg" alt="code_execu_pic_1"><br>    因此在复现过程中POST参数提交filename=test.php以及一句话木马content=<?php eval($_POST['test']; ?>  ，可以看到页面显示成功，并在后台源码根目录下生成了木马文件testp.php，通过URL访问可执行此文件中的一句话木马。</p>
+<p><img src="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/code_execu_pic_2.jpg" alt="code_execu_pic_2"><br><img src="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/code_execu_pic_3.jpg" alt="code_execu_pic_3"><br><img src="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/code_execu_pic_4.jpg" alt="code_execu_pic_4"></p>
+<p>二、漏洞原理分析</p>
+<p><img src="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/code_execu_pic_5.jpg" alt="code_execu_pic_5"><br>    此漏洞的成因来自于两个方面。首先，file_puts_contents的参数filename以及content来源于浏览器客户端，并且对参数的内容并无检查和过滤，使得攻击者可以写入构造的恶意代码，造成任意代码执行；其次是PHP本身存在将字符串转为PHP可执行代码的函数（eval、preg_replace、assert等），通过这些函数能够将浏览器端传入的伪造POST字符串转换为可执行代码，生成可执行的木马文件。<br>    因此根据漏洞成因，任意代码执行漏洞的利用分为两个方面。首先在未经过检查和过滤的POST参数中添加构造的代码字符串，并通过PHP函数将其转换为可执行的PHP代码，并能够生成相应的木马PHP文件；其次在浏览器客户端中通过URL访问该木马PHP文件，并传入需要的参数，完成代码执行。【若在PHP函数中直接写入无需参数的代码字符串，则后续在浏览器客户端中直接访问木马PHP文件即可】</p>
+<p>三、漏洞修复方法<br>   （1）对file_put_content的参数进行检查和过滤，可添加白名单或黑名单，禁止敏感字符串写入。<br>   （2）设置用户对file_put_content函数的使用权限。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/" data-id="ck1qhz8cy0002towiyja4hi5j" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/任意代码执行漏洞/">任意代码执行漏洞</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Arbitrary-File-Read-Vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/10/14/Arbitrary-File-Read-Vulnerability/" class="article-date">
@@ -96,7 +140,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-File-Read-Vulnerability/" data-id="ck1qh65cs00008cwibct9llzt" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-File-Read-Vulnerability/" data-id="ck1qhz8cw0001towix0a3h0w4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
@@ -143,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/14/sql/" data-id="ck1qh65d200038cwidx5sjkm5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/14/sql/" data-id="ck1qhz8d20004towihbss1hmw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql-inject/">sql_inject</a></li></ul>
@@ -194,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/03/hello-world/" data-id="ck1qh65de00068cwimwvfn3he" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/03/hello-world/" data-id="ck1qhz8cs0000towi5nkpyign" class="article-share-link">Share</a>
       
       
     </footer>
@@ -217,7 +261,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-inject/">sql_inject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-inject/">sql_inject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意代码执行漏洞/">任意代码执行漏洞</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
     </div>
   </div>
 
@@ -227,7 +271,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/sql-inject/" style="font-size: 10px;">sql_inject</a> <a href="/tags/任意文件读取漏洞/" style="font-size: 10px;">任意文件读取漏洞</a>
+      <a href="/tags/sql-inject/" style="font-size: 10px;">sql_inject</a> <a href="/tags/任意代码执行漏洞/" style="font-size: 10px;">任意代码执行漏洞</a> <a href="/tags/任意文件读取漏洞/" style="font-size: 10px;">任意文件读取漏洞</a>
     </div>
   </div>
 
@@ -247,6 +291,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/">Arbitrary file Code Execution Vulnerability</a>
+          </li>
         
           <li>
             <a href="/2019/10/14/Arbitrary-File-Read-Vulnerability/">Arbitrary File Read Vulnerability</a>
