@@ -62,6 +62,59 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-First-weekstudy-conclusion" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/14/First-weekstudy-conclusion/" class="article-date">
+  <time datetime="2019-10-14T14:14:14.000Z" itemprop="datePublished">2019-10-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/14/First-weekstudy-conclusion/">First_weekstudy_conclusion</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一、PHP-Web交互</p>
+<p>web表单提交的方式有两种：POST 和 GET</p>
+<p>1、POST方式可以没有限制地传递数据到服务器端，所有信息都是在后台传输的，用户在浏览器中看不到这一过程，安全性高。另外POST方式不会将信息附加在URL后，不会显示在地址栏。所以POST方式比较适合发送一些保密或容量较大的数据到服务器。 </p>
+<p>2、GET方式为表单提交的默认方式。使用GET方式提交表单数据时，数据被附加到URL后，并作为URL的一部分发送到服务器。因此，在浏览器地址栏中能够看到用户提交的信息，在地址栏中会显示“URL?用户传递的参数列表”。</p>
+<p>其中POST URL中参数的值将传入服务器相应php文件中，经过处理返回相应的HTML页面。</p>
+<p>在PHP文件中，变量前都有$，可用来承接URL传入的参数；PHP常用自带函数file_get_contents（将整个文件读入一个字符串）和file_put_contents（将一个字符串写入文件中）若对参数不进行过滤和处理，可能导致任意代码执行和任意文件读取漏洞。</p>
+<p>二、PHP-MySql交互</p>
+<p>Web应用程序经常需要访问数据库，因此在PHP文件中会涉及与MySQL数据库的交互。</p>
+<p>（1）PHP连接数据库<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_1.jpg" alt="first_week_pic_1"><br>（2）PHP操作数据库<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_2.jpg" alt="first_week_pic_2"><br>（3）安全问题<br>通常情况下mysqli_query执行的$sql包含浏览器端URL中的参数或参数的拼接，若恶意参数传入且php端无检查或过滤，则可能导致SQL注入漏洞，执行恶意sql语句，造成信息泄露或破坏。</p>
+<p>三、BurpSuit实践操作</p>
+<p>（1）BurpSuit配置<br>     1）浏览器-选项设置-局域网设置-启动代理（127.0.0.1:8080）<br>     2）访问<a href="http://burp/，下载burpsuit证书，并加入浏览器证书中，开启信任" target="_blank" rel="noopener">http://burp/，下载burpsuit证书，并加入浏览器证书中，开启信任</a><br>（2）BurpSuit抓包<br>     1）浏览器端输入URL访问，将提交POST数据<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_3.jpg" alt="first_week_pic_3"><br>     2) BurpSuit抓到POST数据<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_4.jpg" alt="first_week_pic_4"><br>     3）追踪此次POST，加入Repeter<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_5.jpg" alt="first_week_pic_5"><br>     4）修改POST包再发出，查看返回包<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_6.jpg" alt="first_week_pic_6"><br>注：访问本地网站时，发现burpsuit无法抓取本地网站的包，解决方法为在虚拟机A中搭建网站，在虚拟机B中访问本地网站并抓包，获得成功。</p>
+<p>四、Sqlmap实践操作</p>
+<p>（1）基础命令<br>    ./sqlmap.py -u “注入地址” -v 1 –dbs   // 列举数据库<br>    ./sqlmap.py -u “注入地址” -v 1 –current-db   // 当前数据库<br>    ./sqlmap.py -u “注入地址” -v 1 –users    // 列数据库用户<br>    ./sqlmap.py -u “注入地址” -v 1 –current-user  // 当前用户<br>    ./sqlmap.py -u “注入地址” -v 1 –tables -D “数据库”   // 列举数据库的表名<br>    ./sqlmap.py -u “注入地址” -v 1 –columns -T “表名” -D “数据库”   // 获取表的列名<br>（2）POST注入<br>    ./sqlmap -u “注入地址” –data=”post数据”<br>    ./sqlmap -r POST文件 –dbms mysql –batch –current -db/user<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_7.jpg" alt="first_week_pic_7"><br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_8.jpg" alt="first_week_pic_8"><br>注：尽可能使得POST数据少一些，尽可能为英文（若内容较多且包含中文，可能存在sqlmap无法识别注入点的情况）</p>
+<p>五、DVWA安装配置<br>（1）    将DVWA源码放置phpstudy WWW目录中<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_10.jpg" alt="first_week_pic_9"><br>（2）    找到 ../WWW/DVWA-master/config目录下的config.inc.php文件，打开它，修改‘db_password’为‘root’<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_10.jpg" alt="first_week_pic_10"><br>（3）    访问localhost/DVWA /setup.php，按指定步骤配置进入登录界面。用户名默认admin，密码默认password<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_11.jpg" alt="first_week_pic_11"><br>（4）    查看DVWA所在web服务器的IP地址，此台机器作为靶机。</p>
+<p>（5）    在另一台机器上访问DVWA，发现被拒绝<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_12.jpg" alt="first_week_pic_12"><br>（6）    在靶机dvwa目录下的hataccess文件中添加许可<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_13.jpg" alt="first_week_pic_13"><br>（7）    但不知为何还是无法访问DVWA，接下来有待解决<br><img src="/2019/10/14/First-weekstudy-conclusion/first_week_pic_14.jpg" alt="first_week_pic_14"><br>注：【后续可在DVWA上测试练习】</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/14/First-weekstudy-conclusion/" data-id="ck1qj6u1h0003mowibqglkjks" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/10-8-10．12学习总结/">10.8-10．12学习总结</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Arbitrary-file-Code-Execution-Vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/" class="article-date">
@@ -94,7 +147,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/" data-id="ck1qhz8cy0002towiyja4hi5j" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/" data-id="ck1qj6u1j0004mowix932ly4p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/任意代码执行漏洞/">任意代码执行漏洞</a></li></ul>
@@ -140,7 +193,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-File-Read-Vulnerability/" data-id="ck1qhz8cw0001towix0a3h0w4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/14/Arbitrary-File-Read-Vulnerability/" data-id="ck1qj6u170000mowi33i2lktw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
@@ -187,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/14/sql/" data-id="ck1qhz8d20004towihbss1hmw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/14/sql/" data-id="ck1qj6u1k0005mowicw68jlhy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql-inject/">sql_inject</a></li></ul>
@@ -238,7 +291,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/03/hello-world/" data-id="ck1qhz8cs0000towi5nkpyign" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/03/hello-world/" data-id="ck1qj6u1d0001mowirw1jjnz8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -261,7 +314,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-inject/">sql_inject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意代码执行漏洞/">任意代码执行漏洞</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/10-8-10．12学习总结/">10.8-10．12学习总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql-inject/">sql_inject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意代码执行漏洞/">任意代码执行漏洞</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任意文件读取漏洞/">任意文件读取漏洞</a></li></ul>
     </div>
   </div>
 
@@ -271,7 +324,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/sql-inject/" style="font-size: 10px;">sql_inject</a> <a href="/tags/任意代码执行漏洞/" style="font-size: 10px;">任意代码执行漏洞</a> <a href="/tags/任意文件读取漏洞/" style="font-size: 10px;">任意文件读取漏洞</a>
+      <a href="/tags/10-8-10．12学习总结/" style="font-size: 10px;">10.8-10．12学习总结</a> <a href="/tags/sql-inject/" style="font-size: 10px;">sql_inject</a> <a href="/tags/任意代码执行漏洞/" style="font-size: 10px;">任意代码执行漏洞</a> <a href="/tags/任意文件读取漏洞/" style="font-size: 10px;">任意文件读取漏洞</a>
     </div>
   </div>
 
@@ -291,6 +344,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/10/14/First-weekstudy-conclusion/">First_weekstudy_conclusion</a>
+          </li>
         
           <li>
             <a href="/2019/10/14/Arbitrary-file-Code-Execution-Vulnerability/">Arbitrary file Code Execution Vulnerability</a>
